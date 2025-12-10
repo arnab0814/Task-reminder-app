@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task List</title>
+</head>
+<body>
+
+<h1>All Tasks</h1>
+
+<!-- success message after save -->
+<div th:if="${successMessage}">
+    <p th:text="${successMessage}" style="color: green;"></p>
+</div>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Task Name</th>
+        <th>Description</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Due Date</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task : ${tasks}">
+        <td th:text="${task.id}"></td>
+        <td th:text="${task.name}"></td>
+        <td th:text="${task.description}"></td>
+        <td th:text="${task.priority}"></td>
+        <td th:text="${task.status}"></td>
+        <td th:text="${task.dueDate}"></td>
+        <td>
+
+            <a th:href="@{/tasks/edit/{id}(id=${task.id})}">Edit</a>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(tasks)}">
+        <td colspan="6">No tasks yet.</td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+    <a th:href="@{/tasks/new}">Add New Task</a>
+</p>
+
+</body>
+</html>

@@ -16,17 +16,18 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public TaskEntity SaveTask(TaskEntity task){
+    public TaskEntity saveTask(TaskEntity task){
         return taskRepository.save(task);
     }
-    public List<TaskEntity> getTaskById(){
+
+    public List<TaskEntity> getAllTasks(){
         return taskRepository.findAll();
     }
 
     public TaskEntity findById(Long id){
         return taskRepository.findById(id).orElseThrow(()->new RuntimeException("Task not found"));
     }
-    public void delete(long id){
+    public void deleteTask(long id){
         taskRepository.deleteById(id);
     }
 }

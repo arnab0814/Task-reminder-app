@@ -36,7 +36,7 @@ public class TaskController {
 
     @PostMapping("/save")
     public String saveTask(@ModelAttribute("task") TaskEntity task, RedirectAttributes redirectAttributes){
-        taskService.SaveTask(task);
+        taskService.saveTask(task);
         redirectAttributes.addFlashAttribute("SucessMessage","Task Saved SuessFully!");
         redirectAttributes.addFlashAttribute("task",new TaskEntity());
         return "redirect:/tasks/list";
@@ -44,7 +44,7 @@ public class TaskController {
 
     @GetMapping("list")
     public String listTasks(Model model){
-        List<TaskEntity> tasks = taskService.getTaskById();
+        List<TaskEntity> tasks = taskService.getAllTasks();
         model.addAttribute("tasks",tasks);
         return "task";
     }
@@ -54,6 +54,14 @@ public class TaskController {
         TaskEntity task = taskService.findById(id);
         model.addAttribute("task",task);
         return "edit_task";
+
+    }
+    @GetMapping("/delete/{id}")
+    public String deleteTask(@PathVariable("id") Long id,RedirectAttributes redirectAttributes){
+       taskService.deleteTask(id);
+       redirectAttributes.addFlashAttribute("sucessMessage","Task Deleted Sucess Fully!");
+       redirectAttributes.addFlashAttribute("task",new TaskEntity());
+       return "redirect:/tasks/list";
 
     }
 }

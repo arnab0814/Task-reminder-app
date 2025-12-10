@@ -2,10 +2,12 @@ package com.taskmanager.app.entity;
 
 import com.taskmanager.app.controller.TaskController;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Configuration
 @Entity
@@ -30,6 +32,10 @@ public class TaskEntity {
 
     @Column(name = "due_date")
     private LocalDate dueDate;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     public TaskEntity(){
     }
@@ -89,5 +95,13 @@ public class TaskEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

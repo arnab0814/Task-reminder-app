@@ -8,29 +8,28 @@
 
 <h1 th:text="${task.id} != null ? 'Edit Task' : 'Create Task'"></h1>
 
-<!-- Success message (if you want to use it here too) -->
 <div th:if="${successMessage}">
     <p th:text="${successMessage}" style="color: green;"></p>
 </div>
 
 <form th:action="@{/tasks/save}" th:object="${task}" method="post">
 
-    <!-- ✅ Hidden ID so Spring knows which task to update -->
+
     <input type="hidden" th:field="*{id}"/>
 
-    <!-- Task Name -->
+
     <div>
         <label for="name">Task Name:</label>
         <input type="text" id="name" th:field="*{name}" required>
     </div>
 
-    <!-- Task Description -->
+
     <div>
         <label for="description">Description:</label>
         <textarea id="description" th:field="*{description}" rows="4" cols="40"></textarea>
     </div>
 
-    <!-- Priority -->
+
     <div>
         <label for="priority">Priority:</label>
         <select id="priority" th:field="*{priority}">
@@ -45,12 +44,13 @@
         <label for="status">Status:</label>
         <select id="status" th:field="*{status}">
             <option value="">--Select Status--</option>
-            <option value="PENDING">Pending</option>
-            <option value="COMPLETED">Completed</option>
+            <option value="PENDING" style="color : red;">Pending</option>
+            <option value="IN_PROGRESS">In_Progress</option>
+            <option value="DONE" style="color : green;">Done</option>
         </select>
     </div>
 
-    <!-- Due Date -->
+
     <div>
         <label for="dueDate">Due Date:</label>
         <input type="date" id="dueDate" th:field="*{dueDate}">
@@ -65,7 +65,6 @@
 
 </form>
 
-<!-- Back to list -->
 <p>
     <a th:href="@{/tasks/list}">Back to Task List</a>
 </p>

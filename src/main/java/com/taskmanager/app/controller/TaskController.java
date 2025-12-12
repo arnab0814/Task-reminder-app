@@ -3,6 +3,7 @@ package com.taskmanager.app.controller;
 import com.taskmanager.app.entity.TaskEntity;
 import com.taskmanager.app.repository.TaskRepository;
 import com.taskmanager.app.service.TaskService;
+import org.springframework.data.domain.Page;
 import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,9 +44,16 @@ public class TaskController {
     }
 
     @GetMapping("list")
-    public String listTasks(Model model){
+    public String listTasks(@RequestParam(name = "page",defaultValue = "0") int page,
+            @RequestParam(name = "size",defaultValue = "10") int size,
+            Model model){
+        Page<TaskEntity> taskPage = taskService.getTasksPage(page, size);
         List<TaskEntity> tasks = taskService.getAllTasks();
         model.addAttribute("tasks",tasks);
+        model.addAttribute("taskPage",taskPage);
+        model.addAttribute("currentPage",page);
+        model.addAttribute("pageSize",size);
+        model.addAttribute("totalPages",taskPage.getTotalPages());
         return "task";
     }
 
@@ -63,5 +71,15 @@ public class TaskController {
        redirectAttributes.addFlashAttribute("task",new TaskEntity());
        return "redirect:/tasks/list";
 
+    }
+    @GetMapping("/done/{id}")
+    public String markDone(@PathVariable("id") Long id,RedirectAttributes redirectAttributes){
+        try {
+            taskService.marksDone(id);
+            redirectAttributes.addFlashAttribute("Sucess Message","Task Marked Done.");
+        }catch (IllegalArgumentException ex){
+            redirectAttributes.addFlashAttribute("errorMessage ","Task Not Found");
+        }
+        return "redirect:/tasks/list";
     }
 }

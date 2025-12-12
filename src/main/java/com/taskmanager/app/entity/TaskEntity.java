@@ -1,5 +1,6 @@
 package com.taskmanager.app.entity;
 
+import ch.qos.logback.core.status.Status;
 import com.taskmanager.app.controller.TaskController;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,8 +28,15 @@ public class TaskEntity {
     @Column(nullable = false)
     private String priority;
 
-    @Column(nullable = false)
-    private String status;
+    public enum Status{
+        PENDING,
+        IN_PROGRESS,
+        DONE
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Status status = Status.PENDING;
 
     @Column(name = "due_date")
     private LocalDate dueDate;
@@ -41,7 +49,7 @@ public class TaskEntity {
     }
 
 
-    public TaskEntity(String name, String description, String priority, LocalDate dueDate, String status){
+    public TaskEntity(String name, String description, String priority, LocalDate dueDate, Status status){
        this.name = name;
        this.description = description;
        this.dueDate = dueDate;
@@ -89,11 +97,11 @@ public class TaskEntity {
         this.dueDate = dueDate;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

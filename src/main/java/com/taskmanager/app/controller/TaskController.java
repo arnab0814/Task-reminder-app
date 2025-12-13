@@ -3,6 +3,7 @@ package com.taskmanager.app.controller;
 import com.taskmanager.app.entity.TaskEntity;
 import com.taskmanager.app.repository.TaskRepository;
 import com.taskmanager.app.service.TaskService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Controller;
@@ -44,18 +45,34 @@ public class TaskController {
     }
 
     @GetMapping("list")
-    public String listTasks(@RequestParam(name = "page",defaultValue = "0") int page,
-            @RequestParam(name = "size",defaultValue = "10") int size,
-            Model model){
-        Page<TaskEntity> taskPage = taskService.getTasksPage(page, size);
-        List<TaskEntity> tasks = taskService.getAllTasks();
-        model.addAttribute("tasks",tasks);
-        model.addAttribute("taskPage",taskPage);
-        model.addAttribute("currentPage",page);
-        model.addAttribute("pageSize",size);
-        model.addAttribute("totalPages",taskPage.getTotalPages());
+    public String listTasks(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "sortField", defaultValue = "id") String sortField,
+            @RequestParam(name = "sortDir", defaultValue = "ASC") String sortDir,
+            @RequestParam(name = "status", required = false) TaskEntity.Status status,
+            @RequestParam(name = "priority", required = false) String priority,
+            @RequestParam(name = "title", required = false) String title,
+            Model model) {
+
+        Page<TaskEntity> taskPage = taskService.getFilterTasks(page, size, sortField, sortDir, status, priority, title);
+
+        model.addAttribute("taskPage", taskPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("totalPages", taskPage.getTotalPages());
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+
+        model.addAttribute("filterStatus", status);
+        model.addAttribute("filterPriority", priority);
+        model.addAttribute("filterTitle", title);
+
         return "task";
     }
+
+
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model){
@@ -82,4 +99,30 @@ public class TaskController {
         }
         return "redirect:/tasks/list";
     }
+
+//    @GetMapping("/list")
+//    public String listTasks(@RequestParam(defaultValue = "0")Integer page,
+//                            @RequestParam(defaultValue = "5")Integer size,
+//                            @RequestParam(defaultValue = "id") String sortField,
+//                            @RequestParam(defaultValue = "ASC") String sortDir,
+//                            @RequestParam(required = false) TaskEntity.Status status,
+//                            @RequestParam(required = false) String priority,
+//                            @RequestParam(required = false) String title, Model model){
+//
+//        Page<TaskEntity> taskEntityPage = taskService.getFilterTasks(page,size,sortField,sortDir,status,priority,title);
+//        model.addAttribute("taskPage",taskEntityPage);
+//        model.addAttribute("currentPage",page);
+//        model.addAttribute("pageSize",size);
+//        model.addAttribute("totalPage",taskEntityPage.getTotalPages());
+//        model.addAttribute("sortField",sortField);
+//        model.addAttribute("sortDir",sortDir);
+//
+//        model.addAttribute("filterStatus",status);
+//        model.addAttribute("filterPriority",priority);
+//        model.addAttribute("filterTitle",title);
+//
+//        return "task";
+//    }
+
+
 }

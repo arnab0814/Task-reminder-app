@@ -100,29 +100,6 @@ public class TaskController {
         return "redirect:/tasks/list";
     }
 
-//    @GetMapping("/list")
-//    public String listTasks(@RequestParam(defaultValue = "0")Integer page,
-//                            @RequestParam(defaultValue = "5")Integer size,
-//                            @RequestParam(defaultValue = "id") String sortField,
-//                            @RequestParam(defaultValue = "ASC") String sortDir,
-//                            @RequestParam(required = false) TaskEntity.Status status,
-//                            @RequestParam(required = false) String priority,
-//                            @RequestParam(required = false) String title, Model model){
-//
-//        Page<TaskEntity> taskEntityPage = taskService.getFilterTasks(page,size,sortField,sortDir,status,priority,title);
-//        model.addAttribute("taskPage",taskEntityPage);
-//        model.addAttribute("currentPage",page);
-//        model.addAttribute("pageSize",size);
-//        model.addAttribute("totalPage",taskEntityPage.getTotalPages());
-//        model.addAttribute("sortField",sortField);
-//        model.addAttribute("sortDir",sortDir);
-//
-//        model.addAttribute("filterStatus",status);
-//        model.addAttribute("filterPriority",priority);
-//        model.addAttribute("filterTitle",title);
-//
-//        return "task";
-//    }
 
 
 }

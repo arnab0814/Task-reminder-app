@@ -3,17 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Task List</title>
-    <style>
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background: #f4f4f4; cursor: pointer; }
-        .actions a { margin-right: 8px; }
-        .badge-done { color: orange; font-weight: bold; }
-        .badge-in_progress {color: green; font-weight: bold; }
-        .badge-pending { color: red; font-weight: bold; }
-        .strike { text-decoration: line-through; color: gray; }
-        .pager a { margin: 0 4px; }
-    </style>
+   <link rel="stylesheet" th:href="@{/task.css}">
 </head>
 <body>
 

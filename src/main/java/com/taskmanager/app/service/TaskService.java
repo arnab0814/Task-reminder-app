@@ -10,7 +10,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -33,6 +35,10 @@ public class TaskService {
     public TaskEntity findById(Long id){
         return taskRepository.findById(id).orElseThrow(()->new RuntimeException("Task not found"));
     }
+
+    public Optional<TaskEntity> getTaskById(Long id){
+        return taskRepository.findById(id);
+    }
     public void deleteTask(long id){
         taskRepository.deleteById(id);
     }
@@ -45,6 +51,7 @@ public class TaskService {
     public TaskEntity marksDone(Long id){
         TaskEntity task = taskRepository.findById(id).orElseThrow(()->new IllegalArgumentException("Invalid Task ID: "+id));
         task.setStatus(TaskEntity.Status.DONE);
+        task.setCompletedAt(LocalDateTime.now());
         return taskRepository.save(task);
     }
 

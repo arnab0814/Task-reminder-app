@@ -100,6 +100,15 @@ public class TaskController {
         return "redirect:/tasks/list";
     }
 
+    @GetMapping("/view/{id}")
+    public String viewTask(@PathVariable Long id, Model model){
+        TaskEntity task = taskService.getTaskById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        model.addAttribute("task",task);
+        return "task_view";
+    }
+
 
 
 }

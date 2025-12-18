@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Task</title>
+    <link rel="stylesheet" th:href="@{/css/task.css}">
+    <style>
+        .view-box {
+            max-width: 700px;
+            background: #ffffff;
+            padding: 20px;
+            margin: 40px auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .row {
+            margin-bottom: 14px;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .value {
+            margin-top: 4px;
+            font-size: 15px;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="view-box">
+    <h2>Task Details</h2>
+
+    <div class="row">
+        <div class="label">Task Name</div>
+        <div class="value" th:text="${task.name}"></div>
+    </div>
+
+    <div class="row">
+        <div class="label">Description</div>
+        <div class="value" th:text="${task.description}"></div>
+    </div>
+
+    <div class="row">
+        <div class="label">Priority</div>
+        <div class="value"
+             th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Status</div>
+        <div class="value"
+             th:text="${#strings.replace(
+                 #strings.capitalize(#strings.toLowerCase(task.status.name())),
+                 '_',' '
+             )}">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Due Date</div>
+        <div class="value"
+             th:text="${task.dueDate != null ? #temporals.format(task.dueDate,'dd-MM-yyyy') : '—'}">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Created At</div>
+        <div class="value"
+             th:text="${#temporals.format(task.createdAt,'dd-MM-yyyy HH:mm')}">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="label">Completed At</div>
+        <div class="value"
+             th:text="${task.completedAt != null ? #temporals.format(task.completedAt,'dd-MM-yyyy HH:mm') : '—'}">
+        </div>
+    </div>
+
+    <a class="back-link" th:href="@{/tasks/list}">← Back to Task List</a>
+</div>
+
+</body>
+</html>

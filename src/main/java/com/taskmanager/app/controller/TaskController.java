@@ -77,6 +77,9 @@ public class TaskController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model){
         TaskEntity task = taskService.findById(id);
+        if (task.getStatus() == TaskEntity.Status.DONE) {
+            return "redirect:/tasks/list";
+        }
         model.addAttribute("task",task);
         return "edit_task";
 
@@ -104,7 +107,6 @@ public class TaskController {
     public String viewTask(@PathVariable Long id, Model model){
         TaskEntity task = taskService.getTaskById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
-
         model.addAttribute("task",task);
         return "task_view";
     }

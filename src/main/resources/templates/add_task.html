@@ -2,68 +2,119 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${task.id} != null ? 'Edit Task' : 'Create Task'">Task Form</title>
+    <title>Add Task</title>
+
+    <style>
+        body {
+            background: linear-gradient(120deg, #667eea, #764ba2);
+            font-family: "Segoe UI", sans-serif;
+        }
+        .card {
+            width: 460px;
+            margin: 70px auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 12px 30px rgba(0,0,0,.2);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #333;
+        }
+        .group {
+            margin-bottom: 16px;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        textarea {
+            resize: none;
+            height: 90px;
+        }
+        .actions {
+            margin-top: 22px;
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            background: #667eea;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        a {
+            align-self: center;
+            color: #555;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
 
-<h1 th:text="${task.id} != null ? 'Edit Task' : 'Create Task'"></h1>
+<div class="card">
 
+    <h2>Add New Task</h2>
 
-<div th:if="${successMessage}">
-    <p th:text="${successMessage}" style="color: green;"></p>
+    <form th:action="@{/tasks/save}" th:object="${task}" method="post">
+
+        <div class="group">
+            <label>Task Title</label>
+            <input type="text" th:field="*{name}" placeholder="Task title" required>
+        </div>
+
+        <div class="group">
+            <label>Description</label>
+            <textarea th:field="*{description}" placeholder="Describe the task"></textarea>
+        </div>
+
+        <div class="group">
+            <label>Priority</label>
+            <select th:field="*{priority}" required>
+                <option value="">Select priority</option>
+                <option value="HIGH">High</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="LOW">Low</option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label>Status</label>
+            <select th:field="*{status}">
+                <option value="PENDING">Pending</option>
+                <option value="IN_PROGRESS">In Progress</option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label>Due Date</label>
+            <input type="date" th:field="*{dueDate}">
+        </div>
+
+        <div class="actions">
+            <button type="submit">Create Task</button>
+            <a th:href="@{/tasks/list}">Cancel</a>
+        </div>
+
+    </form>
+
 </div>
 
-<form th:action="@{/tasks/save}" th:object="${task}" method="post">
-
-
-    <input type="hidden" th:field="*{id}"/>
-
-
-    <div>
-        <label for="name">Task Name:</label>
-        <input type="text" id="name" th:field="*{name}" required>
-    </div>
-
-
-    <div>
-        <label for="description">Description:</label>
-        <textarea id="description" th:field="*{description}" rows="4" cols="40"></textarea>
-    </div>
-
-
-    <div>
-        <label for="priority">Priority:</label>
-        <select id="priority" th:field="*{priority}">
-            <option value="">-- Select Priority --</option>
-            <option value="HIGH">High</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="LOW">Low</option>
-        </select>
-    </div>
-
-
-    <div>
-        <label for="status">Status:</label>
-        <select id="status" th:field="*{status}">
-            <option value="">-- Select status --</option>
-            <option value="PENDING" style="color:red;">Pending</option>
-            <option value="DONE" style="color : green">Done</option>
-            <option value="IN_PROGRESS">In_Progress</option>
-        </select>
-    </div>
-
-
-    <div>
-        <label for="dueDate">Due Date:</label>
-        <input type="date" id="dueDate" th:field="*{dueDate}">
-    </div>
-
-    <div>
-        <button type="submit">Save Task</button>
-    </div>
-</form>
-   <p>
-       <a th:href="@{/tasks/list}">Back to Task List</a>
-   </p>
 </body>
 </html>

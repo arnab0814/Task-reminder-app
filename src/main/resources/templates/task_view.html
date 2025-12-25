@@ -87,7 +87,13 @@
         </div>
     </div>
 
-    <a class="back-link" th:href="@{/tasks/list}">← Back to Task List</a>
+    <a class="back-link" th:href="@{/tasks/list}">
+        <button type="button">Back To Task List</button>
+    </a>
+<br><br>
+    <a th:href="@{/tasks/edit/{id}(id=${task.id})}" >
+        <button type="button">Edit Task</button>
+    </a>
 </div>
 
 </body>

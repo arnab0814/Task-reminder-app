@@ -7,7 +7,51 @@
 </head>
 <body>
 
-<h1>All Tasks</h1>
+<div class="header">
+    <h1>Task Manager</h1>
+
+    <button class="btn btn-outline" onclick="toggleView()">
+        🗂 Card View
+    </button>
+
+</div>
+<div id="cardView" class="card-container">
+
+    <div class="task-card"
+         th:each="task : ${taskPage.content}"
+         th:classappend="${task.status.name() == 'DONE'} ? 'done' : ''">
+
+        <div>
+            <div class="task-title" th:text="${task.name}">Task</div>
+
+            <div class="task-desc" th:text="${task.description}"></div>
+
+            <div class="meta">
+                Priority:
+                <b th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}"></b><br/>
+                Due:
+                <span th:text="${task.dueDate != null ? #temporals.format(task.dueDate,'dd MMM yyyy') : 'N/A'}"></span>
+            </div>
+
+            <span class="badge"
+                  th:classappend="${task.status.name() == 'DONE'} ? 'done' : 'pending'"
+                  th:text="${task.status.name()}">
+            </span>
+        </div>
+
+        <div class="card-actions">
+            <a th:href="@{/tasks/view/{id}(id=${task.id})}">View</a>
+
+            <span th:if="${task.status.name() != 'DONE'}">
+                <a th:href="@{/tasks/edit/{id}(id=${task.id})}">Edit</a>
+                <a th:href="@{/tasks/done/{id}(id=${task.id})}">Done</a>
+            </span>
+        </div>
+    </div>
+</div>
+
+
+
 
 
 <div th:if="${successMessage}">
@@ -49,6 +93,11 @@
     <a href="/tasks/list" style="margin-left:8px;">
         <button type="button">Clear Filters</button>
     </a>
+    <div class="add">
+    <a th:href="@{/tasks/new}" style="margin-top:14px;">
+            <button type="button">Add New Task</button>
+    </a>
+    </div>
 </form>
 
 <table>
@@ -115,7 +164,13 @@
 
 
         <td th:text="${task.description}">Description</td>
-        <td th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}"></td>
+        <td>
+            <span class="priority-badge"
+          th:classappend="'priority-' + ${#strings.toLowerCase(task.priority)}"
+          th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}">
+        </span>
+        </td>
+
 
         <td>
             <span th:if="${task.status != null and task.status.name() == 'DONE'}" class="badge-done">DONE</span>
@@ -137,25 +192,32 @@
 
 
         <td class="actions">
-            <a th:href="@{/tasks/view/{id}(id=${task.id})}">View</a> |
-
-            <span th:if="${task.status.name() != 'DONE'}">
-        <a th:href="@{/tasks/edit/{id}(id=${task.id})}">Edit</a> |
-    </span>
-
-            <a th:href="@{/tasks/delete/{id}(id=${task.id})}"
-               onclick="return confirm('Are you sure you want to delete this task?');">
-                Delete
+            <a th:href="@{/tasks/view/{id}(id=${task.id})}" title="View">
+                👁 View
             </a>
 
             <span th:if="${task.status.name() != 'DONE'}">
-        &nbsp;|&nbsp;
-        <a th:href="@{/tasks/done/{id}(id=${task.id})}"
-           onclick="return confirm('Mark this task as done?');">
-           Mark Done
+        <a th:href="@{/tasks/edit/{id}(id=${task.id})}" title="Edit">
+            ✏ Edit
         </a>
     </span>
+
+            <span th:if="${task.status.name() != 'DONE'}">
+        <a th:href="@{/tasks/done/{id}(id=${task.id})}"
+           onclick="return confirm('Mark this task as done?');"
+           title="Mark Done">
+            ✅ Done
+        </a>
+    </span>
+
+            <a th:href="@{/tasks/delete/{id}(id=${task.id})}"
+               onclick="return confirm('Delete this task?');"
+               title="Delete"
+               class="danger">
+                🗑 Delete
+            </a>
         </td>
+
     </tr>
 
     <tr th:if="${#lists.isEmpty(taskPage.content)}">
@@ -163,6 +225,33 @@
     </tr>
     </tbody>
 </table>
+<script>
+    function toggleView() {
+        const cardView = document.getElementById("cardView");
+        const table = document.querySelector("table");
+        const toggleBtn = document.querySelector(".header button");
+
+        if (!cardView || !table || !toggleBtn) {
+            console.error("Toggle elements missing");
+            return;
+        }
+
+        const cardVisible = cardView.style.display === "grid";
+
+        if (cardVisible) {
+            cardView.style.display = "none";
+            table.style.display = "table";
+            toggleBtn.textContent = "🗂 Card View";
+        } else {
+            cardView.style.display = "grid";
+            table.style.display = "none";
+            toggleBtn.textContent = "📋 List View";
+        }
+    }
+</script>
+
+
+
 
 <div class="pager" th:if="${totalPages > 1}" style="margin-top:12px;">
     <span>Page [[${currentPage + 1}]] of [[${totalPages}]]</span>
@@ -181,12 +270,11 @@
 
     <a th:if="${!taskPage.last}" th:href="@{/tasks/list(page=${totalPages - 1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir}, status=${filterStatus != null ? filterStatus.name() : ''}, priority=${filterPriority}, title=${filterTitle})}">Last &raquo;</a>
 </div>
-
-<p style="margin-top:16px;">
-    <a th:href="@{/tasks/new}">
-        <button type="button">Add New Task </button>
-    </a>
-</p>
+<!--<div class="add">-->
+<!--    <a th:href="@{/tasks/new}" style="margin-top:14px;">-->
+<!--        <button type="button">Add New Task</button>-->
+<!--    </a>-->
+<!--</div>-->
 
 </body>
 </html>

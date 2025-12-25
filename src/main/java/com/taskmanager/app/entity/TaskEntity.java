@@ -1,10 +1,7 @@
 package com.taskmanager.app.entity;
 
-import ch.qos.logback.core.status.Status;
-import com.taskmanager.app.controller.TaskController;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;

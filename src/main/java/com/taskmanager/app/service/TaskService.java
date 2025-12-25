@@ -2,7 +2,6 @@ package com.taskmanager.app.service;
 
 import com.taskmanager.app.entity.TaskEntity;
 import com.taskmanager.app.repository.TaskRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

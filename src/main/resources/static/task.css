@@ -13,7 +13,8 @@ body {
 .header {
     background: linear-gradient(135deg, #1e3a8a, #2563eb);
     color: #ffffff;
-    padding: 16px 28px;
+    padding: 12px 28px;
+    border-radius:8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,17 +33,63 @@ body {
     color: #1e40af;
     border: none;
     padding: 9px 16px;
+    margin:9px 2px;
     border-radius: 10px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.top-actions .btn {
+    padding: 8px 14px;
+    font-size: 14px;
+}
 
 .header button:hover {
     background: #e0e7ff;
     transform: translateY(-1px);
 }
+.modal {
+    display:none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    border-radius: 10px;
+    overflow-y: auto;
+    display:block;
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.task-card {
+    background: #f9fafb;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
 
 form {
     background: #ffffff;
@@ -95,116 +142,160 @@ form a button {
 form a button:hover {
     background: #d1d5db;
 }
-
+.clrfilter{
+    text-decoration:none;
+}
+.table-container {
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 16px;
+}
 table {
-    width: calc(100% - 40px);
-    margin: 20px;
+    width: 100%;
     border-collapse: collapse;
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 10px 26px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 
-thead {
-    background: #f1f5f9;
+table tbody td a {
+    color: #4b5563;
+    text-decoration: none;
+    font-weight: 400;
+}
+
+table tbody td a:hover {
+    color: #111827;
+
+}
+
+table thead th a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+table thead th a:hover {
+    text-decoration:underline;
 }
 
 th {
-    padding: 14px;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    color: #334155;
+    background: #1f2937;
+    color: #ffffff;
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 14px;
 }
 
 td {
-    padding: 14px;
+    padding: 14px 16px;
     font-size: 14px;
-    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+    border-bottom: 1px solid #eee;
+}
+tbody tr {
+    line-height: 1.4;
+}
+tbody tr:hover {
+    background: #f3f7ff;
 }
 
-tr:hover {
-    background: #f8fafc;
+td:nth-child(3) {
+    white-space: normal;
+    color: #555;
+}
+th:last-child {
+    text-align: center;
 }
 
 .done-row {
-    background: #f0fdf4;
+    background: #f9fafb;
+}
+
+.done-row td:nth-child(2) {
+    text-decoration: line-through;
+    color: #888;
+}
+
+td.priority-high { color: #dc2626; font-weight: 600; }
+td.priority-medium { color: #d97706; font-weight: 600; }
+td.priority-low { color: #059669; font-weight: 600; }
+
+
+.badge-done,
+.badge-pending,
+.badge-in_progress {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 12px;
+    font-weight: 600;
 }
 
 .badge-done {
-    color: #166534;
-    font-weight: 700;
-}
-
-.badge-pending {
-    color: #92400e;
-    font-weight: 700;
-}
-
-.badge-in_progress {
-    color: #1e40af;
-    font-weight: 700;
-}
-
-/* ===== PRIORITY BADGES ===== */
-.priority-badge {
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: capitalize;
-    display: inline-block;
-}
-
-/* Priority colors */
-.priority-high {
-    background: #fee2e2;
-    color: #b91c1c;
-}
-
-.priority-medium {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.priority-low {
     background: #dcfce7;
     color: #166534;
 }
 
-.actions {
+.badge-pending {
+    background: #fff7ed;
+    color: #9a3412;
+}
+
+.badge-in_progress {
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+td.actions {
+    text-align: center;
     white-space: nowrap;
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
 .actions a {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    margin-right: 8px;
-    padding: 6px 8px;
-    border-radius: 6px;
+    justify-content: center;
+    margin: 0 4px;
+    margin-right: 6px;
     font-size: 13px;
-    color: #2563eb;
     text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease;
+    padding: 4px 8px;
+    border-radius: 4px;
 }
 
+
+.actions a {
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+
+.actions a[href*="view"] {
+    background: #2563eb;
+}
+
+.actions a[href*="edit"] {
+    background: #d97706;
+}
+
+.actions a[href*="delete"] {
+    background: #dc2626;
+}
+
+.actions a[href*="done"] {
+    background: #16a34a;
+}
 .actions a:hover {
-    background: #e0e7ff;
-    color: #1e40af;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    opacity: 0.95;
 }
 
-/* Delete action */
-.actions a.danger {
-    color: #dc2626;
-}
 
-.actions a.danger:hover {
-    background: #fee2e2;
-    color: #991b1b;
-}
 
 
 .card-container {
@@ -216,61 +307,50 @@ tr:hover {
 
 .task-card {
     background: #ffffff;
-    padding: 18px 20px;
-    border-radius: 18px;
-    box-shadow: 0 14px 30px rgba(0,0,0,0.12);
-    transition: all 0.25s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.task-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 36px rgba(0,0,0,0.18);
-}
-
-.task-card.done {
-    opacity: 0.65;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    display: block;
+    color: #222;
 }
 
 .task-title {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 6px;
-    color: #0f172a;
+    color: #1f2937;
 }
 
 .task-desc {
     font-size: 14px;
-    color: #475569;
+    color: #4b5563;
     margin-bottom: 10px;
 }
 
 .meta {
     font-size: 13px;
-    color: #334155;
+    color: #374151;
     margin-bottom: 8px;
 }
 
 .badge {
     display: inline-block;
-    padding: 6px 12px;
+    padding: 4px 10px;
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 700;
-    width: fit-content;
+    font-weight: 600;
+    color: #fff;
 }
 
 .badge.done {
-    background: #dcfce7;
-    color: #166534;
+    background: #16a34a;
 }
 
 .badge.pending {
-    background: #fef3c7;
-    color: #92400e;
+    background: #f59e0b;
 }
+
 
 .card-actions {
     margin-top: 10px;
@@ -308,13 +388,14 @@ tr:hover {
     background: #e0e7ff;
 }
 
-.add {
+.addNew {
     margin-top: 10px;
+    margin-left: 500px;
     text-align: right;
     display:right;
 }
 
-.add button {
+.addNew button {
     background: linear-gradient(135deg, #16a34a, #22c55e);
     color: white;
     border: none;
@@ -325,6 +406,63 @@ tr:hover {
     cursor: pointer;
 }
 
-.add button:hover {
+.addNew button:hover {
     background: linear-gradient(135deg, #15803d, #16a34a);
 }
+
+
+#calendar,
+#calendar * {
+    box-sizing: border-box !important;
+}
+
+.fc {
+    display: block !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 14px !important;
+}
+
+.fc-view-harness {
+    display: block !important;
+    min-height: 600px !important;
+}
+
+.fc-scrollgrid,
+.fc-scrollgrid table {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+}
+
+.fc-daygrid-body {
+    display: block !important;
+}
+
+.fc-daygrid-day {
+    display: table-cell !important;
+    vertical-align: top !important;
+}
+
+.fc-daygrid-day-number {
+    display: block !important;
+    color: #111827 !important;
+    font-weight: 600 !important;
+    padding: 4px !important;
+}
+
+.fc-col-header-cell-cushion {
+    color: #111827 !important;
+    font-weight: 600 !important;
+}
+
+.fc-event-title {
+    color: #ffffff !important;
+}
+#popupTasks {
+    display: block;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 10px;
+}
+

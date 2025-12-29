@@ -4,21 +4,29 @@
     <meta charset="UTF-8">
     <title>Task List</title>
    <link rel="stylesheet" th:href="@{/task.css}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
 </head>
 <body>
 
 <div class="header">
     <h1>Task Manager</h1>
-
+    <div class="top-actions">
     <button class="btn btn-outline" onclick="toggleView()">
         🗂 Card View
     </button>
-
+    <button onclick="openCalendar()" class="btn-calendar">
+        🗓 Calendar
+    </button>
+    </div>
 </div>
 <div id="cardView" class="card-container">
 
     <div class="task-card"
          th:each="task : ${taskPage.content}"
+         onclick="openTaskFromCalendar(${t.id})"
          th:classappend="${task.status.name() == 'DONE'} ? 'done' : ''">
 
         <div>
@@ -50,8 +58,21 @@
     </div>
 </div>
 
+<div id="calendarModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeCalendar()">&times;</span>
+        <h2>Task Calendar</h2>
+        <div id="calendar" ></div>
+    </div>
+</div>
 
-
+<div id="taskPopup" class="modal" >
+    <div class="modal-content">
+        <span class="close" onclick="closeTaskPopup()">&times;</span>
+        <h3 id="popupDate"></h3>
+        <div id="popupTasks" class="card-container"></div>
+    </div>
+</div>
 
 
 <div th:if="${successMessage}">
@@ -90,17 +111,17 @@
     <input type="hidden" name="size" th:value="${pageSize}"/>
 
     <button type="submit" style="margin-left:8px;">Filter</button>
-    <a href="/tasks/list" style="margin-left:8px;">
+    <a href="/tasks/list" class="clrfilter" style="margin-left:8px;">
         <button type="button">Clear Filters</button>
     </a>
-    <div class="add">
-    <a th:href="@{/tasks/new}" style="margin-top:14px;">
+    <a th:href="@{/tasks/new}" class="addNew" style="margin-top:14px;">
             <button type="button">Add New Task</button>
     </a>
-    </div>
 </form>
 
+<div class="table-wrapper">
 <table>
+
     <thead th:with="
         toggleIdDir=${sortField == 'id' ? (sortDir == 'ASC' ? 'DESC' : 'ASC') : 'ASC'},
         toggleNameDir=${sortField == 'name' ? (sortDir == 'ASC' ? 'DESC' : 'ASC') : 'ASC'},
@@ -164,12 +185,10 @@
 
 
         <td th:text="${task.description}">Description</td>
-        <td>
-            <span class="priority-badge"
-          th:classappend="'priority-' + ${#strings.toLowerCase(task.priority)}"
-          th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}">
-        </span>
+        <td th:class="'priority-' + ${#strings.toLowerCase(task.priority)}"
+            th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}">
         </td>
+
 
 
         <td>
@@ -225,6 +244,7 @@
     </tr>
     </tbody>
 </table>
+</div>
 <script>
     function toggleView() {
         const cardView = document.getElementById("cardView");
@@ -248,6 +268,138 @@
             toggleBtn.textContent = "📋 List View";
         }
     }
+let calendar = null;
+
+function openCalendar() {
+    const modal = document.getElementById("calendarModal");
+    modal.style.display = "block";
+
+    // First-time init
+    if (!calendar) {
+        initCalendar();
+    }
+
+    setTimeout(() => {
+        calendar.updateSize();
+    }, 50);
+}
+
+
+function closeCalendar() {
+    document.getElementById("calendarModal").style.display = "none";
+}
+
+function closeTaskPopup() {
+    document.getElementById("taskPopup").style.display = "none";
+}
+
+function initCalendar() {
+    console.log("Initializing calendar...");
+
+    const calendarEl = document.getElementById("calendar");
+    if (!calendarEl) {
+        console.error("Calendar element not found");
+        return;
+    }
+
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        height: 600,
+        selectable: true,
+        fixedWeekCount: false,
+
+        events: "/api/tasks/calendar",
+
+        eventClick: function (info) {
+            info.jsEvent.preventDefault();
+            openTaskFromCalendar(info.event.id);
+        },
+
+        dateClick: function (info) {
+            console.log("Date clicked:", info.dateStr);
+            loadTasksByDate(info.dateStr);
+        }
+    });
+
+    calendar.render();
+}
+
+function openTaskFromCalendar(taskId) {
+    fetch(`/api/tasks/${taskId}`)
+        .then(res => res.json())
+        .then(task => {
+            document.getElementById("popupDate").innerText = task.name;
+
+            const container = document.getElementById("popupTasks");
+            container.innerHTML = `
+                <div class="task-card">
+                    <div class="task-title">${task.name}</div>
+                    <div class="task-desc">${task.description || ""}</div>
+
+                    <div class="meta">
+                        Priority: <b>${task.priority}</b><br/>
+                        Status: <b>${task.status}</b><br/>
+                        Due: ${task.dueDate || "N/A"}
+                    </div>
+
+                    <span class="badge ${task.status === "DONE" ? "done" : "pending"}">
+                        ${task.status}
+                    </span>
+                </div>
+            `;
+
+            document.getElementById("taskPopup").style.display = "block";
+        })
+        .catch(err => console.error("Task load error", err));
+}
+
+function loadTasksByDate(date) {
+    fetch(`/api/tasks/by-date?date=${date}`)
+        .then(res => res.json())
+        .then(tasks => {
+            const popup = document.getElementById("taskPopup");
+            const container = document.getElementById("popupTasks");
+
+            document.getElementById("popupDate").innerText =
+                "Tasks on " + date;
+
+            container.innerHTML = "";
+
+            if (!tasks.length) {
+                container.innerHTML = "<p>No tasks found.</p>";
+                popup.style.display = "block";
+                return;
+            }
+
+            tasks.forEach(t => {
+                container.innerHTML += `
+                    <div class="task-card">
+                        <div class="task-title">${t.name}</div>
+
+                        <div class="task-desc">
+                            ${t.description || "No description"}
+                        </div>
+
+                        <div class="meta">
+                            <b>Priority:</b> ${t.priority}<br/>
+                            <b>Status:</b> ${t.status}<br/>
+                            <b>Due:</b> ${t.dueDate || "N/A"}
+                        </div>
+
+                        <span class="badge ${t.status === "DONE" ? "done" : "pending"}">
+                            ${t.status}
+                        </span>
+                    </div>
+                `;
+            });
+
+            popup.style.display = "block";
+        })
+        .catch(err => console.error(err));
+}
+
+
+
 </script>
 
 
@@ -270,11 +422,6 @@
 
     <a th:if="${!taskPage.last}" th:href="@{/tasks/list(page=${totalPages - 1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir}, status=${filterStatus != null ? filterStatus.name() : ''}, priority=${filterPriority}, title=${filterTitle})}">Last &raquo;</a>
 </div>
-<!--<div class="add">-->
-<!--    <a th:href="@{/tasks/new}" style="margin-top:14px;">-->
-<!--        <button type="button">Add New Task</button>-->
-<!--    </a>-->
-<!--</div>-->
 
 </body>
 </html>

@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.net.URI;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -38,6 +41,18 @@ public class TaskRestController {
         }catch (IllegalArgumentException ex) {
             return ResponseEntity.notFound().build();
         }
+    }
+    @GetMapping("/overdue")
+    public List<TaskEntity> overdue(){
+        return taskService.getOverdueTasks(LocalDate.now());
+    }
+    @GetMapping("/today")
+    public List<TaskEntity> today(){
+        return taskService.getTodayTasks(LocalDate.now());
+    }
+    @GetMapping("/upcoming")
+    public List<TaskEntity> upcoming(){
+        return taskService.getUpcomingTasks(LocalDate.now());
     }
 
     @PostMapping
@@ -78,6 +93,40 @@ public class TaskRestController {
             return ResponseEntity.notFound().build();
         }
         return null;
+    }
+
+    @GetMapping("/by-date")
+    public List<TaskEntity> byDate(@RequestParam String date) {
+        return taskService.getTasksByDate(LocalDate.parse(date));
+    }
+
+    @GetMapping("/calendar")
+    public List<Map<String, Object>> calendarEvents() {
+
+        return taskService.getAllTasks().stream()
+                .filter(t -> t.getDueDate() != null)
+                .map(t -> {
+                    Map<String, Object> event = new HashMap<>();
+                    event.put("id",t.getId());
+                    event.put("title", t.getName());
+                    event.put("start", t.getDueDate().toString());
+                    switch (t.getStatus()) {
+                        case DONE -> {
+                            event.put("backgroundColor", "#16a34a");
+                            event.put("borderColor", "#16a34a");
+                        }
+                        case IN_PROGRESS -> {
+                            event.put("backgroundColor", "#f59e0b");
+                            event.put("borderColor", "#f59e0b");
+                        }
+                        default -> {
+                            event.put("backgroundColor", "#3b82f6");
+                            event.put("borderColor", "#3b82f6");
+                        }
+                    }
+                    return event;
+                })
+                .toList();
     }
 
 }

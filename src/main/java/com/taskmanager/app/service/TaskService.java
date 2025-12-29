@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,6 @@ import java.util.Optional;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-
 
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
@@ -35,9 +35,13 @@ public class TaskService {
         return taskRepository.findById(id).orElseThrow(()->new RuntimeException("Task not found"));
     }
 
-    public Optional<TaskEntity> getTaskById(Long id){
+//    public Optional<TaskEntity> getTaskById(Long id){
+//        return taskRepository.findById(id);
+//    }
+    public Optional<TaskEntity> getTaskById(Long id) {
         return taskRepository.findById(id);
     }
+
     public void deleteTask(long id){
         taskRepository.deleteById(id);
     }
@@ -89,4 +93,22 @@ public class TaskService {
             };
         }
     }
+    public List<TaskEntity> getOverdueTasks(LocalDate today) {
+        return taskRepository
+                .findByDueDateBeforeAndStatusNot(today, TaskEntity.Status.DONE);
+    }
+
+    public List<TaskEntity> getTodayTasks(LocalDate today) {
+        return taskRepository.findByDueDate(today);
+    }
+
+    public List<TaskEntity> getUpcomingTasks(LocalDate today) {
+        return taskRepository.findByDueDateAfter(today);
+    }
+
+    public List<TaskEntity> getTasksByDate(LocalDate date) {
+        return taskRepository.findByDueDate(date);
+    }
+
+
 }

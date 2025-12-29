@@ -132,7 +132,9 @@
         </div>
 
         <div class="actions">
+            <a th:hred="@{/tasks/edit}">
             <button type="submit" th:if="${task.status.name() != 'DONE'}">Update Task</button>
+            </a>
             <a th:href="@{/tasks/list}">Back</a>
         </div>
 

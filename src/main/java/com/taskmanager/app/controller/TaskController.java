@@ -2,7 +2,9 @@ package com.taskmanager.app.controller;
 
 import com.taskmanager.app.entity.TaskEntity;
 import com.taskmanager.app.service.TaskService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,23 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    private boolean notLoggedIn(HttpSession session) {
+        return session.getAttribute("LOGGED_IN_USER") == null;
+    }
+
+    private boolean isLoggedIn(HttpSession session) {
+        return session != null && session.getAttribute("LOGGED_IN_USER") != null;
+    }
+
+
+
 
     @GetMapping("/new")
-    public String showCreateForm(Model model){
+    public String showCreateForm(HttpSession session,Model model){
+        if (session.getAttribute("LOGGED_IN_USER") == null) {
+            return "redirect:/auth/register";
+        }
+
         TaskEntity task = new TaskEntity();
         model.addAttribute("task",new TaskEntity());
         if (!model.containsAttribute("task")){
@@ -34,14 +50,18 @@ public class TaskController {
 
 
     @PostMapping("/save")
-    public String saveTask(@ModelAttribute("task") TaskEntity task, RedirectAttributes redirectAttributes){
+    public String saveTask(@ModelAttribute("task") TaskEntity task, RedirectAttributes redirectAttributes,HttpSession session){
+        if (session.getAttribute("LOGGED_IN_USER") == null) {
+            return "redirect:/auth/register";
+        }
+
         taskService.saveTask(task);
         redirectAttributes.addFlashAttribute("SucessMessage","Task Saved SuessFully!");
         redirectAttributes.addFlashAttribute("task",new TaskEntity());
         return "redirect:/tasks/list";
     }
 
-    @GetMapping("list")
+    @GetMapping("/list")
     public String listTasks(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
@@ -50,9 +70,16 @@ public class TaskController {
             @RequestParam(name = "status", required = false) TaskEntity.Status status,
             @RequestParam(name = "priority", required = false) String priority,
             @RequestParam(name = "title", required = false) String title,
+            HttpSession session,
             Model model) {
 
+        if (!isLoggedIn(session)) {
+            return "redirect:/auth/register";
+        }
+
         Page<TaskEntity> taskPage = taskService.getFilterTasks(page, size, sortField, sortDir, status, priority, title);
+
+
 
         model.addAttribute("taskPage", taskPage);
         model.addAttribute("currentPage", page);
@@ -66,13 +93,18 @@ public class TaskController {
         model.addAttribute("filterPriority", priority);
         model.addAttribute("filterTitle", title);
 
+
         return "task";
     }
 
 
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Long id, Model model){
+    public String showEditForm(@PathVariable("id") Long id, Model model,HttpSession session){
+        if (session.getAttribute("LOGGED_IN_USER") == null) {
+            return "redirect:/auth/register";
+        }
+
         TaskEntity task = taskService.findById(id);
         if (task.getStatus() == TaskEntity.Status.DONE) {
             return "redirect:/tasks/list";
@@ -82,15 +114,22 @@ public class TaskController {
 
     }
     @GetMapping("/delete/{id}")
-    public String deleteTask(@PathVariable("id") Long id,RedirectAttributes redirectAttributes){
-       taskService.deleteTask(id);
+    public String deleteTask(@PathVariable("id") Long id,RedirectAttributes redirectAttributes,HttpSession session){
+        if (session.getAttribute("LOGGED_IN_USER") == null) {
+            return "redirect:/auth/register";
+        }
+        taskService.deleteTask(id);
        redirectAttributes.addFlashAttribute("sucessMessage","Task Deleted Sucess Fully!");
        redirectAttributes.addFlashAttribute("task",new TaskEntity());
        return "redirect:/tasks/list";
 
     }
     @GetMapping("/done/{id}")
-    public String markDone(@PathVariable("id") Long id,RedirectAttributes redirectAttributes){
+    public String markDone(@PathVariable("id") Long id,RedirectAttributes redirectAttributes,HttpSession session){
+        if (session.getAttribute("LOGGED_IN_USER") == null) {
+            return "redirect:/auth/register";
+        }
+
         try {
             taskService.marksDone(id);
             redirectAttributes.addFlashAttribute("Sucess Message","Task Marked Done.");
@@ -101,7 +140,11 @@ public class TaskController {
     }
 
     @GetMapping("/view/{id}")
-    public String viewTask(@PathVariable Long id, Model model){
+    public String viewTask(@PathVariable Long id, Model model,HttpSession session){
+        if (session.getAttribute("LOGGED_IN_USER") == null) {
+            return "redirect:/auth/register";
+        }
+
         TaskEntity task = taskService.getTaskById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
         model.addAttribute("task",task);

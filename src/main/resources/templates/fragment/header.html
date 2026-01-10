@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="el">
+
+<div th:fragment="header">
+    <header class="app-header">
+
+     
+        <div class="header-left">
+            <span class="logo">🗂 Task Manager</span>
+        </div>
+
+        
+        <div class="header-center">
+            <span id="liveClock">--:--:--</span>
+        </div>
+
+        
+        <div class="header-right">
+
+            <div class="top-actions">
+                <button class="btn btn-outline" onclick="toggleView()">
+                    🗂 Card View
+                </button>
+
+                <button class="btn btn-calendar" onclick="openCalendar()">
+                    🗓 Calendar
+                </button>
+            </div>
+
+            <div class="user-section">
+            <span class="user-badge">
+                👤 Welcome,
+                <b th:text="${session.LOGGED_IN_USER.name}">User</b>
+            </span>
+
+                <a th:href="@{/auth/logout}" class="logout-btn">Logout</a>
+            </div>
+
+        </div>
+
+    </header>
+</div>

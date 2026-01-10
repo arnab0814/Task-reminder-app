@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Add Task</title>
-
+    <link rel="stylesheet" th:href="@{/task.css}">
+<!--    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>-->
     <style>
         body {
             background: linear-gradient(120deg, #667eea, #764ba2);
@@ -60,14 +61,19 @@
         }
         a {
             align-self: center;
-            color: #555;
+            color: blue;
             text-decoration: none;
             font-weight: 600;
+        }
+        .cancel{
+            background-color:green;
+            border-radius:6px;
+
         }
     </style>
 </head>
 <body>
-
+<div th:replace="~{fragment/header :: header}"></div>
 <div class="card">
 
     <h2>Add New Task</h2>
@@ -109,12 +115,15 @@
 
         <div class="actions">
             <button type="submit">Create Task</button>
-            <a th:href="@{/tasks/list}">Cancel</a>
-        </div>
+            <div class="cancel">
+                <a th:href="@{/tasks/list}">Cancel</a>
+            </div>
+            </div>
 
     </form>
 
 </div>
-
+<script th:src="@{/app.js}"></script>
+<div th:replace="~{fragment/footer :: footer}"></div>
 </body>
 </html>

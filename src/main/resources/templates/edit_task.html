@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Task</title>
+    <link rel="stylesheet" th:href="@{/task.css}">
+<!--    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>-->
 
     <style>
         body {
@@ -69,10 +71,15 @@
             text-decoration: none;
             font-weight: 600;
         }
+        .cancel{
+            background-color:green;
+            border-radius:6px;
+
+        }
     </style>
 </head>
 <body>
-
+<div th:replace="~{fragment/header :: header}"></div>
 <div class="card">
 
     <h2>Edit Task</h2>
@@ -135,12 +142,16 @@
             <a th:hred="@{/tasks/edit}">
             <button type="submit" th:if="${task.status.name() != 'DONE'}">Update Task</button>
             </a>
-            <a th:href="@{/tasks/list}">Back</a>
+            <div class="cancel">
+            <a th:href="@{/tasks/list}"> Back </a>
+            </div>
         </div>
 
     </form>
 
 </div>
 
+<script th:src="@{/app.js}"></script>
+<div th:replace="~{fragment/footer :: footer}"></div>
 </body>
 </html>

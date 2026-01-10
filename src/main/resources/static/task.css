@@ -10,52 +10,58 @@ body {
     color: #1f2937;
 }
 
-.header {
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
-    color: #ffffff;
-    padding: 12px 28px;
-    border-radius:8px;
+.app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    background: linear-gradient(90deg,#111827,#1f2937);
+    padding: 12px 24px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,.3);
 }
 
-.header h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
+.logo {
+    font-size: 20px;
+    font-weight: 700;
 }
 
-.header button {
-    background: #ffffff;
-    color: #1e40af;
-    border: none;
-    padding: 9px 16px;
-    margin:9px 2px;
-    border-radius: 10px;
-    font-size: 14px;
+.header-center {
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }
-.top-actions {
+
+.header-right {
     display: flex;
+    gap: 10px;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
 }
 
-.top-actions .btn {
-    padding: 8px 14px;
-    font-size: 14px;
+.btn {
+    background: transparent;
+    border: 1px solid #9ca3af;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-.header button:hover {
-    background: #e0e7ff;
-    transform: translateY(-1px);
+.btn:hover {
+    background: #2563eb;
 }
+
+.user-badge {
+    background: #374151;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+.logout-btn {
+    background: #dc2626;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
 .modal {
     display:none;
     position: fixed;

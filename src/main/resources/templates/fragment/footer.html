@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<body>
+    <div th:fragment="footer">
+        <footer class="app-footer">
+            <p>© 2026 Task Manager | Made By Arnab Das</p>
+        </footer>
+
+        <style>
+            .app-footer {
+                margin-top: 40px;
+                padding: 14px;
+                text-align: center;
+                font-size: 14px;
+                color: #6b7280;
+                background: #f9fafb;
+                border-top: 1px solid #e5e7eb;
+            }
+        </style>
+
+
+
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+const yearEl = document.getElementById("year");
+if (yearEl) {
+    yearEl.innerText = new Date().getFullYear();
+}
+});
+
+    </script>
+
+
+</body>
+</html>

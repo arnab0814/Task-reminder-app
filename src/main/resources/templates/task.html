@@ -8,55 +8,49 @@
           href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 
+
 </head>
 <body>
+<div th:replace="~{fragment/header :: header}"></div>
 
-<div class="header">
-    <h1>Task Manager</h1>
-    <div class="top-actions">
-    <button class="btn btn-outline" onclick="toggleView()">
-        🗂 Card View
-    </button>
-    <button onclick="openCalendar()" class="btn-calendar">
-        🗓 Calendar
-    </button>
-    </div>
-</div>
 <div id="cardView" class="card-container">
 
     <div class="task-card"
          th:each="task : ${taskPage.content}"
-         onclick="openTaskFromCalendar(${t.id})"
-         th:classappend="${task.status.name() == 'DONE'} ? 'done' : ''">
+         th:classappend="${task.status != null and task.status.name() == 'DONE'} ? ' done' : ''">
 
-        <div>
-            <div class="task-title" th:text="${task.name}">Task</div>
+        <div class="task-title" th:text="${task.name}"></div>
 
-            <div class="task-desc" th:text="${task.description}"></div>
+        <div class="task-desc" th:text="${task.description}"></div>
 
-            <div class="meta">
-                Priority:
-                <b th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}"></b><br/>
-                Due:
-                <span th:text="${task.dueDate != null ? #temporals.format(task.dueDate,'dd MMM yyyy') : 'N/A'}"></span>
-            </div>
-
-            <span class="badge"
-                  th:classappend="${task.status.name() == 'DONE'} ? 'done' : 'pending'"
-                  th:text="${task.status.name()}">
-            </span>
+        <div class="meta">
+            Priority:
+            <b th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}"></b><br/>
+            Due:
+            <span th:text="${task.dueDate != null ? #temporals.format(task.dueDate,'dd MMM yyyy') : 'N/A'}"></span>
         </div>
 
+        <!-- CARD ACTIONS -->
         <div class="card-actions">
-            <a th:href="@{/tasks/view/{id}(id=${task.id})}">View</a>
 
-            <span th:if="${task.status.name() != 'DONE'}">
-                <a th:href="@{/tasks/edit/{id}(id=${task.id})}">Edit</a>
-                <a th:href="@{/tasks/done/{id}(id=${task.id})}">Done</a>
-            </span>
+            <button class="card-btn"
+                    onclick="openTaskFromCalendar([[${task.id}]])">
+                📅 Details
+            </button>
+
+            <a th:href="@{/tasks/view/{id}(id=${task.id})}">👁 View</a>
+
+            <a th:if="${task.status.name() != 'DONE'}"
+               th:href="@{/tasks/edit/{id}(id=${task.id})}">
+                ✏ Edit
+            </a>
+
         </div>
+
     </div>
+
 </div>
+
 
 <div id="calendarModal" class="modal">
     <div class="modal-content">
@@ -169,27 +163,25 @@
     </thead>
 
     <tbody>
-    <tr th:each="task : ${taskPage.content}" th:classappend="${task.status.name() == 'DONE'} ? 'done-row' : ''">
-        <td th:text="${task.id}">1</td>
+    <tr th:each="task : ${taskPage.content}"
+        th:classappend="${task.status != null and task.status.name() == 'DONE'} ? ' done-row' : ''">
+
+        <td th:text="${task.id}"></td>
 
         <td>
-    <span th:if="${task.status != null and task.status.name() == 'DONE'}"
-          class="strike"
-          th:text="${task.name}">
-    </span>
+        <span th:if="${task.status != null and task.status.name() == 'DONE'}"
+              class="strike"
+              th:text="${task.name}"></span>
 
             <span th:if="${task.status == null or task.status.name() != 'DONE'}"
-                  th:text="${task.name}">
-    </span>
+                  th:text="${task.name}"></span>
         </td>
 
+        <td th:text="${task.description}"></td>
 
-        <td th:text="${task.description}">Description</td>
-        <td th:class="'priority-' + ${#strings.toLowerCase(task.priority)}"
+        <td th:class="${'priority-' + #strings.toLowerCase(task.priority)}"
             th:text="${#strings.capitalize(#strings.toLowerCase(task.priority))}">
         </td>
-
-
 
         <td>
             <span th:if="${task.status != null and task.status.name() == 'DONE'}" class="badge-done">DONE</span>
@@ -197,46 +189,29 @@
             <span th:if="${task.status == null or task.status.name() == 'PENDING'}" class="badge-pending">PENDING</span>
         </td>
 
-        <td th:text="${task.dueDate != null ? #temporals.format(task.dueDate,'dd-MM-yyyy') : 'N/A'}">N/A</td>
+        <td th:text="${task.dueDate != null ? #temporals.format(task.dueDate,'dd-MM-yyyy') : 'N/A'}"></td>
 
-        <td th:text="${task.createdAt != null ? #temporals.format(task.createdAt,'dd-MM-yyyy HH:mm') : 'N/A'}">N/A</td>
+        <td th:text="${task.createdAt != null ? #temporals.format(task.createdAt,'dd-MM-yyyy HH:mm') : 'N/A'}"></td>
 
         <td>
         <span th:if="${task.completedAt != null}"
-              th:text="${#temporals.format(task.completedAt,'dd-MM-yyyy HH:mm')}">
-        </span>
-                <span th:if="${task.completedAt == null}">—</span>
+              th:text="${#temporals.format(task.completedAt,'dd-MM-yyyy HH:mm')}"></span>
+            <span th:if="${task.completedAt == null}">—</span>
         </td>
 
-
-
         <td class="actions">
-            <a th:href="@{/tasks/view/{id}(id=${task.id})}" title="View">
-                👁 View
-            </a>
+            <a th:href="@{/tasks/view/{id}(id=${task.id})}">👁 View</a>
 
-            <span th:if="${task.status.name() != 'DONE'}">
-        <a th:href="@{/tasks/edit/{id}(id=${task.id})}" title="Edit">
-            ✏ Edit
-        </a>
-    </span>
-
-            <span th:if="${task.status.name() != 'DONE'}">
-        <a th:href="@{/tasks/done/{id}(id=${task.id})}"
-           onclick="return confirm('Mark this task as done?');"
-           title="Mark Done">
-            ✅ Done
-        </a>
-    </span>
+            <span th:if="${task.status == null or task.status.name() != 'DONE'}">
+            <a th:href="@{/tasks/edit/{id}(id=${task.id})}">✏ Edit</a>
+            <a th:href="@{/tasks/done/{id}(id=${task.id})}"
+               onclick="return confirm('Mark this task as done?');">✅ Done</a>
+        </span>
 
             <a th:href="@{/tasks/delete/{id}(id=${task.id})}"
                onclick="return confirm('Delete this task?');"
-               title="Delete"
-               class="danger">
-                🗑 Delete
-            </a>
+               class="danger">🗑 Delete</a>
         </td>
-
     </tr>
 
     <tr th:if="${#lists.isEmpty(taskPage.content)}">
@@ -246,157 +221,210 @@
 </table>
 </div>
 <script>
+    function updateClock() {
+        const clock = document.getElementById("liveClock");
+        if (!clock) return;
+
+        clock.textContent = new Date().toLocaleTimeString();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        updateClock();
+        setInterval(updateClock, 1000);
+    });
+
+
     function toggleView() {
         const cardView = document.getElementById("cardView");
         const table = document.querySelector("table");
-        const toggleBtn = document.querySelector(".header button");
 
-        if (!cardView || !table || !toggleBtn) {
-            console.error("Toggle elements missing");
-            return;
-        }
+        if (!cardView || !table) return;
 
-        const cardVisible = cardView.style.display === "grid";
+        const isCard = cardView.style.display === "grid";
 
-        if (cardVisible) {
-            cardView.style.display = "none";
-            table.style.display = "table";
-            toggleBtn.textContent = "🗂 Card View";
-        } else {
-            cardView.style.display = "grid";
-            table.style.display = "none";
-            toggleBtn.textContent = "📋 List View";
-        }
-    }
-let calendar = null;
-
-function openCalendar() {
-    const modal = document.getElementById("calendarModal");
-    modal.style.display = "block";
-
-    // First-time init
-    if (!calendar) {
-        initCalendar();
+        cardView.style.display = isCard ? "none" : "grid";
+        table.style.display = isCard ? "table" : "none";
     }
 
-    setTimeout(() => {
-        calendar.updateSize();
-    }, 50);
-}
-
-
-function closeCalendar() {
-    document.getElementById("calendarModal").style.display = "none";
-}
-
-function closeTaskPopup() {
-    document.getElementById("taskPopup").style.display = "none";
-}
-
-function initCalendar() {
-    console.log("Initializing calendar...");
-
-    const calendarEl = document.getElementById("calendar");
-    if (!calendarEl) {
-        console.error("Calendar element not found");
-        return;
+    function openCalendar() {
+        const modal = document.getElementById("calendarModal");
+        if (modal) modal.style.display = "block";
     }
 
-    calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: "dayGridMonth",
-        height: 600,
-        selectable: true,
-        fixedWeekCount: false,
 
-        events: "/api/tasks/calendar",
+    function openTaskFromCalendar(taskId) {
+        console.log("Open task:", taskId);
 
-        eventClick: function (info) {
-            info.jsEvent.preventDefault();
-            openTaskFromCalendar(info.event.id);
-        },
+    }
 
-        dateClick: function (info) {
-            console.log("Date clicked:", info.dateStr);
-            loadTasksByDate(info.dateStr);
-        }
-    });
 
-    calendar.render();
-}
 
-function openTaskFromCalendar(taskId) {
-    fetch(`/api/tasks/${taskId}`)
-        .then(res => res.json())
-        .then(task => {
-            document.getElementById("popupDate").innerText = task.name;
+    window.toggleView = function () {
+            const cardView = document.getElementById("cardView");
+            const table = document.querySelector("table");
+            const toggleBtn = document.querySelector(".app-header .btn-outline");
 
-            const container = document.getElementById("popupTasks");
-            container.innerHTML = `
-                <div class="task-card">
-                    <div class="task-title">${task.name}</div>
-                    <div class="task-desc">${task.description || ""}</div>
-
-                    <div class="meta">
-                        Priority: <b>${task.priority}</b><br/>
-                        Status: <b>${task.status}</b><br/>
-                        Due: ${task.dueDate || "N/A"}
-                    </div>
-
-                    <span class="badge ${task.status === "DONE" ? "done" : "pending"}">
-                        ${task.status}
-                    </span>
-                </div>
-            `;
-
-            document.getElementById("taskPopup").style.display = "block";
-        })
-        .catch(err => console.error("Task load error", err));
-}
-
-function loadTasksByDate(date) {
-    fetch(`/api/tasks/by-date?date=${date}`)
-        .then(res => res.json())
-        .then(tasks => {
-            const popup = document.getElementById("taskPopup");
-            const container = document.getElementById("popupTasks");
-
-            document.getElementById("popupDate").innerText =
-                "Tasks on " + date;
-
-            container.innerHTML = "";
-
-            if (!tasks.length) {
-                container.innerHTML = "<p>No tasks found.</p>";
-                popup.style.display = "block";
+            if (!cardView || !table || !toggleBtn) {
+                console.error("Toggle elements missing", {
+                    cardView, table, toggleBtn
+                });
                 return;
             }
 
-            tasks.forEach(t => {
-                container.innerHTML += `
-                    <div class="task-card">
-                        <div class="task-title">${t.name}</div>
+            const isCard = cardView.style.display === "grid";
 
-                        <div class="task-desc">
-                            ${t.description || "No description"}
-                        </div>
+            if (isCard) {
+                cardView.style.display = "none";
+                table.style.display = "table";
+                toggleBtn.textContent = "🗂 Card View";
+            } else {
+                cardView.style.display = "grid";
+                table.style.display = "none";
+                toggleBtn.textContent = "📋 List View";
+            }
+        };
+
+    let calendar = null;
+
+    function openCalendar() {
+        const modal = document.getElementById("calendarModal");
+        modal.style.display = "block";
+
+
+        if (!calendar) {
+            initCalendar();
+        }
+
+        setTimeout(() => {
+            calendar.updateSize();
+        }, 50);
+    }
+
+
+    function closeCalendar() {
+        document.getElementById("calendarModal").style.display = "none";
+    }
+
+    function closeTaskPopup() {
+        document.getElementById("taskPopup").style.display = "none";
+    }
+
+    function initCalendar() {
+        console.log("Initializing calendar...");
+
+        const calendarEl = document.getElementById("calendar");
+        if (!calendarEl) {
+            console.error("Calendar element not found");
+            return;
+        }
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: "dayGridMonth",
+            height: 600,
+            selectable: true,
+            fixedWeekCount: false,
+
+            events: "/api/tasks/calendar",
+
+            eventClick: function (info) {
+                info.jsEvent.preventDefault();
+                openTaskFromCalendar(info.event.id);
+            },
+
+            dateClick: function (info) {
+                console.log("Date clicked:", info.dateStr);
+                loadTasksByDate(info.dateStr);
+            }
+        });
+
+        calendar.render();
+    }
+
+    function openTaskFromCalendar(taskId) {
+        const popupDate = document.getElementById("popupDate");
+        const container = document.getElementById("popupTasks");
+        const popup = document.getElementById("taskPopup");
+
+        if (!popupDate || !container || !popup) {
+            console.warn("❌ Task popup elements missing on this page");
+            return;
+        }
+
+        fetch(`/api/tasks/${taskId}`)
+            .then(res => res.json())
+            .then(task => {
+                popupDate.textContent = task.name;
+
+                container.innerHTML = `
+                    <div class="task-card">
+                        <div class="task-title">${task.name}</div>
+                        <div class="task-desc">${task.description || ""}</div>
 
                         <div class="meta">
-                            <b>Priority:</b> ${t.priority}<br/>
-                            <b>Status:</b> ${t.status}<br/>
-                            <b>Due:</b> ${t.dueDate || "N/A"}
+                            Priority: <b>${task.priority}</b><br/>
+                            Status: <b>${task.status}</b><br/>
+                            Due: ${task.dueDate || "N/A"}
                         </div>
 
-                        <span class="badge ${t.status === "DONE" ? "done" : "pending"}">
-                            ${t.status}
+                        <span class="badge ${task.status === "DONE" ? "done" : "pending"}">
+                            ${task.status}
                         </span>
                     </div>
                 `;
-            });
 
-            popup.style.display = "block";
-        })
-        .catch(err => console.error(err));
-}
+                popup.style.display = "block";
+            })
+            .catch(err => console.error("Task load error", err));
+    }
+
+    function loadTasksByDate(date) {
+        const popupDate = document.getElementById("popupDate");
+        const container = document.getElementById("popupTasks");
+        const popup = document.getElementById("taskPopup");
+
+        if (!popupDate || !container || !popup) {
+            console.warn("❌ Task popup elements missing on this page");
+            return;
+        }
+
+        fetch(`/api/tasks/by-date?date=${date}`)
+            .then(res => res.json())
+            .then(tasks => {
+                popupDate.textContent = "Tasks on " + date;
+                container.innerHTML = "";
+
+                if (!tasks.length) {
+                    container.innerHTML = "<p>No tasks found.</p>";
+                    popup.style.display = "block";
+                    return;
+                }
+
+                tasks.forEach(t => {
+                    container.innerHTML += `
+                        <div class="task-card">
+                            <div class="task-title">${t.name}</div>
+
+                            <div class="task-desc">
+                                ${t.description || "No description"}
+                            </div>
+
+                            <div class="meta">
+                                <b>Priority:</b> ${t.priority}<br/>
+                                <b>Status:</b> ${t.status}<br/>
+                                <b>Due:</b> ${t.dueDate || "N/A"}
+                            </div>
+
+                            <span class="badge ${t.status === "DONE" ? "done" : "pending"}">
+                                ${t.status}
+                            </span>
+                        </div>
+                    `;
+                });
+
+                popup.style.display = "block";
+            })
+            .catch(err => console.error(err));
+    }
 
 
 
@@ -422,6 +450,9 @@ function loadTasksByDate(date) {
 
     <a th:if="${!taskPage.last}" th:href="@{/tasks/list(page=${totalPages - 1}, size=${pageSize}, sortField=${sortField}, sortDir=${sortDir}, status=${filterStatus != null ? filterStatus.name() : ''}, priority=${filterPriority}, title=${filterTitle})}">Last &raquo;</a>
 </div>
-
+<div th:replace="~{fragment/footer :: footer}"></div>
 </body>
 </html>
+
+
+

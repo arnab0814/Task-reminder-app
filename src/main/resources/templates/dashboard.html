@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/dashboard.css}">
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <a href="/tasks/list" class="back-btn">← Back</a>
+        <h1>Analytics Dashboard</h1>
+    </div>
+
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+        <div class="kpi-card total">
+            <span>Total Tasks</span>
+            <h2 th:text="${totalTasks != null ? totalTasks : 0}">0</h2>
+        </div>
+
+        <div class="kpi-card pending">
+            <span>Pending</span>
+            <h2 th:text="${pendingCount != null ? pendingCount : 0}">0</h2>
+        </div>
+
+        <div class="kpi-card done">
+            <span>Done</span>
+            <h2 th:text="${doneCount != null ? doneCount : 0}">0</h2>
+        </div>
+
+        <div class="kpi-card upcoming">
+            <span>Upcoming</span>
+            <h2 th:text="${upcomingCount != null ? upcomingCount : 0}">0</h2>
+        </div>
+    </div>
+
+    <!-- COMPLETION PROGRESS -->
+    <div class="progress-section">
+        <p>Completion Progress</p>
+
+        <div class="progress-bar">
+            <div class="progress-fill"
+                 th:style="'width:' + (${completionPercent != null ? completionPercent : 0}) + '%'">
+            </div>
+        </div>
+
+        <small th:text="(${completionPercent != null ? completionPercent : 0}) + '%'">
+            0%
+        </small>
+    </div>
+
+    <div class="pie"
+         th:style="'--done:' + (${donePercent} != null ? ${donePercent} : 0)">
+        <span th:text="${donePercent != null ? donePercent + '%' : '0%'}">0%</span>
+    </div>
+
+
+
+    <!-- BAR CHART -->
+    <div class="chart-section">
+        <h3>Task Distribution</h3>
+
+        <div class="bar">
+            <span>Pending</span>
+            <div class="bar-track">
+                <div class="bar-fill pending"
+                     th:style="'width:' + (${totalTasks != null and totalTasks > 0 ? (pendingCount * 100 / totalTasks) : 0}) + '%'">
+                </div>
+            </div>
+        </div>
+
+        <div class="bar">
+            <span>Done</span>
+            <div class="bar-track">
+                <div class="bar-fill done"
+                     th:style="'width:' + (${totalTasks != null and totalTasks > 0 ? (doneCount * 100 / totalTasks) : 0}) + '%'">
+                </div>
+            </div>
+        </div>
+
+        <div class="bar">
+            <span>Upcoming</span>
+            <div class="bar-track">
+                <div class="bar-fill upcoming"
+                     th:style="'width:' + (${totalTasks != null and totalTasks > 0 ? (upcomingCount * 100 / totalTasks) : 0}) + '%'">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

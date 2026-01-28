@@ -1,0 +1,15 @@
+/* Dashboard button */
+.dashboard-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    background: #4f46e5;
+    color: #fff !important;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.dashboard-btn:hover {
+    background: #4338ca;
+    transform: translateY(-1px);
+}

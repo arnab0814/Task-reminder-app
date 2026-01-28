@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="el">
+<link rel="stylesheet" th:href="@{/head.css}">
+
 
 <div th:fragment="header">
     <header class="app-header">
@@ -11,10 +13,20 @@
 
         
         <div class="header-center">
+            <div class="greeting">
             <span id="liveClock">--:--:--</span>
+            </div>
         </div>
 
-        
+
+            <a th:href="@{/dashboard}" class="nav-link dashboard-btn">
+                    📊 Dashboard
+            </a>
+
+
+
+
+
         <div class="header-right">
 
             <div class="top-actions">
@@ -26,6 +38,19 @@
                     🗓 Calendar
                 </button>
             </div>
+            <a th:href="@{/profile}">
+                <img class="nav-avatar"
+                     th:src="${session.LOGGED_IN_USER.profileImage != null ?
+     '/profile-images/' + session.LOGGED_IN_USER.profileImage :
+     '/images/default-user.png'}"
+                     alt="Profile">
+
+            </a>
+
+
+
+
+
 
             <div class="user-section">
             <span class="user-badge">

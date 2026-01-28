@@ -4,11 +4,18 @@ import com.taskmanager.app.entity.UserEntity;
 import com.taskmanager.app.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -30,7 +37,6 @@ public class UserService {
             throw new RuntimeException("Email already registered");
         }
 
-
         user.setVerified(false);
         user.setCreatedAt(LocalDate.now());
 
@@ -39,16 +45,12 @@ public class UserService {
         user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userRepository.save(user);
 
-        String encoded = passwordEncoder.encode(user.getPassword());
-        System.out.println("ENCODED PASSWORD = " + encoded);
-        user.setPassword(encoded);
-
-
         emailService.sendOtp(user.getEmail(), otp);
-
     }
+
 
 
 
@@ -100,4 +102,38 @@ public class UserService {
     private String generateOtp() {
         return String.valueOf(100000 + new Random().nextInt(900000));
     }
+
+    public void updateProfile(
+            UserEntity user,
+            String name,
+            MultipartFile image
+    ) {
+
+        user.setName(name);
+
+        if (image != null && !image.isEmpty()) {
+
+            String fileName =
+                    UUID.randomUUID() + "_" + image.getOriginalFilename();
+
+            Path uploadPath = Paths.get("uploads/profile");
+
+            try {
+                Files.createDirectories(uploadPath);
+                Files.copy(
+                        image.getInputStream(),
+                        uploadPath.resolve(fileName),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+
+                user.setProfileImage(fileName);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Profile image upload failed", e);
+            }
+        }
+
+        userRepository.save(user);
+    }
+
 }

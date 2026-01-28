@@ -32,6 +32,8 @@ public class UserEntity {
     @Column(name = "completedAt")
     private LocalDate createdAt;
 
+    private String profileImage;
+
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDate.from(LocalDateTime.now());
@@ -117,5 +119,11 @@ public class UserEntity {
         this.otpExpiry = otpExpiry;
     }
 
+    public String getProfileImage() {
+        return profileImage;
+    }
 
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
 }

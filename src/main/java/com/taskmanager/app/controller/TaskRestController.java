@@ -1,7 +1,9 @@
 package com.taskmanager.app.controller;
 
 import com.taskmanager.app.entity.TaskEntity;
+import com.taskmanager.app.entity.UserEntity;
 import com.taskmanager.app.service.TaskService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,27 +45,39 @@ public class TaskRestController {
         }
     }
     @GetMapping("/overdue")
-    public List<TaskEntity> overdue(){
-        return taskService.getOverdueTasks(LocalDate.now());
+    public List<TaskEntity> overdue(HttpSession session){
+        UserEntity user = (UserEntity) session.getAttribute("LOGGED_IN_USER");
+        return taskService.getOverdueTasks(user, LocalDate.now());
     }
+
     @GetMapping("/today")
-    public List<TaskEntity> today(){
-        return taskService.getTodayTasks(LocalDate.now());
+    public List<TaskEntity> today(HttpSession session){
+        UserEntity user = (UserEntity) session.getAttribute("LOGGED_IN_USER");
+        return taskService.getTodayTasks(user, LocalDate.now());
     }
+
     @GetMapping("/upcoming")
-    public List<TaskEntity> upcoming(){
-        return taskService.getUpcomingTasks(LocalDate.now());
+    public List<TaskEntity> upcoming(HttpSession session){
+        UserEntity user = (UserEntity) session.getAttribute("LOGGED_IN_USER");
+        return taskService.getUpcomingTasks(user, LocalDate.now());
     }
+
 
     @PostMapping
-    public ResponseEntity<TaskEntity> createTask(@RequestBody TaskEntity task){
+    public ResponseEntity<TaskEntity> createTask(
+            @RequestBody TaskEntity task,
+            HttpSession session
+    ) {
+        UserEntity user = (UserEntity) session.getAttribute("LOGGED_IN_USER");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        task.setUser(user);
         TaskEntity saved = taskService.saveTask(task);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/api/tasks"+saved.getId()));
-
-        return new ResponseEntity<>(saved, headers, HttpStatus.CREATED); // 201
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
+
 
 
     @PutMapping("/{id}")
@@ -95,10 +109,7 @@ public class TaskRestController {
         return null;
     }
 
-    @GetMapping("/by-date")
-    public List<TaskEntity> byDate(@RequestParam String date) {
-        return taskService.getTasksByDate(LocalDate.parse(date));
-    }
+
 
     @GetMapping("/calendar")
     public List<Map<String, Object>> calendarEvents() {

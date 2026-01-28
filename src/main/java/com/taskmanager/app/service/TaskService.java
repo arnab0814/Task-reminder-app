@@ -1,6 +1,7 @@
 package com.taskmanager.app.service;
 
 import com.taskmanager.app.entity.TaskEntity;
+import com.taskmanager.app.entity.UserEntity;
 import com.taskmanager.app.repository.TaskRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,9 +36,6 @@ public class TaskService {
         return taskRepository.findById(id).orElseThrow(()->new RuntimeException("Task not found"));
     }
 
-//    public Optional<TaskEntity> getTaskById(Long id){
-//        return taskRepository.findById(id);
-//    }
     public Optional<TaskEntity> getTaskById(Long id) {
         return taskRepository.findById(id);
     }
@@ -58,19 +56,33 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public Page<TaskEntity> getFilterTasks(Integer page,Integer size, String sortField, String sortDir, TaskEntity.Status status, String priority, String title){
-        int p = page == null || page <0 ? 0 : page;
-        int s = size == null || size <=0 ? 5 : size;
+    public Page<TaskEntity> getFilteredTasksForUser(
+            UserEntity user,
+            Integer page,
+            Integer size,
+            String sortField,
+            String sortDir,
+            TaskEntity.Status status,
+            String priority,
+            String title
+    ) {
+        Pageable pageable = PageRequest.of(
+                page == null || page < 0 ? 0 : page,
+                size == null || size <= 0 ? 5 : size,
+                Sort.by(Sort.Direction.fromString(sortDir), sortField)
+        );
 
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDir == null ? "ASC " : sortDir.toUpperCase()),
-                sortField == null ? "id" : sortField);
+        Specification<TaskEntity> spec =
+                (root, query, cb) -> cb.equal(root.get("user"), user);
 
-        Pageable pageable = PageRequest.of(p,s,sort);
-        Specification<TaskEntity> spec = Specification.where(Specs.hasStatus(status))
+        spec = spec.and(Specs.hasStatus(status))
                 .and(Specs.hasPriority(priority))
                 .and(Specs.titleContains(title));
-        return taskRepository.findAll(spec,pageable);
+
+        return taskRepository.findAll(spec, pageable);
     }
+
+
 
     public static class Specs {
 
@@ -93,22 +105,107 @@ public class TaskService {
             };
         }
     }
-    public List<TaskEntity> getOverdueTasks(LocalDate today) {
+    public List<TaskEntity> getOverdueTasks(
+            UserEntity user,
+            LocalDate today
+    ) {
         return taskRepository
-                .findByDueDateBeforeAndStatusNot(today, TaskEntity.Status.DONE);
+                .findByUserAndDueDateBeforeAndStatusNot(
+                        user,
+                        today,
+                        TaskEntity.Status.DONE
+                );
     }
 
-    public List<TaskEntity> getTodayTasks(LocalDate today) {
-        return taskRepository.findByDueDate(today);
+    public List<TaskEntity> getTodayTasks(
+            UserEntity user,
+            LocalDate today
+    ) {
+        return taskRepository.findByUserAndDueDate(user, today);
     }
 
-    public List<TaskEntity> getUpcomingTasks(LocalDate today) {
-        return taskRepository.findByDueDateAfter(today);
+    public List<TaskEntity> getUpcomingTasks(
+            UserEntity user,
+            LocalDate today
+    ) {
+        return taskRepository.findByUserAndDueDateAfter(user, today);
     }
 
-    public List<TaskEntity> getTasksByDate(LocalDate date) {
-        return taskRepository.findByDueDate(date);
+
+    public long countAll(){
+        return taskRepository.count();
     }
+
+    public long countUpcomingTasks(UserEntity user, LocalDate today) {
+        return taskRepository.countByUserAndDueDateAfterAndStatusNot(
+                user,
+                today,
+                TaskEntity.Status.DONE
+        );
+    }
+    public Page<TaskEntity> getUpcomingTasksPage(
+            UserEntity user,
+            LocalDate today,
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dueDate").ascending());
+
+        return taskRepository.findByUserAndDueDateAfterAndStatusNot(
+                user,
+                today,
+                TaskEntity.Status.DONE,
+                pageable
+        );
+    }
+
+
+
+    public long countByUser(UserEntity user) {
+        return taskRepository.countByUser(user);
+    }
+
+    public long countByUserAndStatus(UserEntity user, TaskEntity.Status status) {
+        return taskRepository.countByUserAndStatus(user, status);
+    }
+    public List<TaskEntity> getHighPriorityTasks(UserEntity user) {
+        return taskRepository
+                .findByUserAndPriority(user, "HIGH");
+    }
+
+    public List<TaskEntity> getTodayPendingTasks(UserEntity user) {
+        return taskRepository.findByUserAndDueDateAndStatusNot(
+                user,
+                LocalDate.now(),
+                TaskEntity.Status.DONE
+        );
+    }
+
+    public List<TaskEntity> getUpcomingTasksForReminder(UserEntity user) {
+        return taskRepository.findByUserAndDueDateAfterAndStatusNot(
+                user,
+                LocalDate.now(),
+                TaskEntity.Status.DONE
+        );
+    }
+
+    public List<TaskEntity> getAllTodayTasks() {
+        return taskRepository.findByDueDateAndStatusNot(
+                LocalDate.now(),
+                TaskEntity.Status.DONE
+        );
+    }
+
+    public List<TaskEntity> getAllTasksForUser(UserEntity user) {
+        return taskRepository.findByUser(user);
+    }
+
+
+
+
+
+
+
 
 
 }

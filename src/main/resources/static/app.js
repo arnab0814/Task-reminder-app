@@ -33,7 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initClock() {
     const clock = document.getElementById("liveClock");
+    const greeting = document.getElementByID("greeting");
     if (!clock) return;
+
+//    if(clock < 12){
+//        console.log("Good Morning");
+//    }
+//    else if(clock < 4){
+//        console.log("Good Afternoon");
+//    }
 
     function update() {
         clock.innerText = new Date().toLocaleTimeString();

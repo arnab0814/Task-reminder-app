@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/profile.css}">
+</head>
+<body>
+
+<h2>Edit Profile</h2>
+
+<form th:action="@{/profile/update}" method="post"
+      enctype="multipart/form-data">
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+
+
+    <div class="profile-pic">
+        <img th:src="${user.profileImage != null ?
+              '/profile-images/' + user.profileImage :
+              '/images/default-user.png'}"
+             alt="Profile">
+    </div>
+
+    <label>Name</label>
+    <input type="text" name="name"
+           th:value="${user.name}" required>
+
+    <label>Email</label>
+    <input type="email"
+           th:value="${user.email}" disabled>
+
+    <label>Change Picture</label>
+    <input type="file" name="image" accept="image/*">
+
+    <button type="submit">Update Profile</button>
+
+    <a href="/tasks/list" class="back">Back</a>
+</form>
+
+</body>
+</html>

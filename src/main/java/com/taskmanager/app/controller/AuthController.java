@@ -1,11 +1,15 @@
 package com.taskmanager.app.controller;
 
 import com.taskmanager.app.entity.UserEntity;
+import com.taskmanager.app.repository.UserRepository;
 import com.taskmanager.app.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/auth")
@@ -21,16 +25,6 @@ public class AuthController {
     }
 
 
-
-
-    @GetMapping("/")
-    public String root(HttpSession session) {
-        if (session.getAttribute("LOGGED_IN_USER") == null) {
-            return "redirect:/auth/register";
-        }
-        return "redirect:/tasks/list";
-    }
-
     @GetMapping("/register")
     public String registerPage() {
         return "register";
@@ -40,13 +34,13 @@ public class AuthController {
     public String register(UserEntity user, Model model) {
         try {
             userService.register(user);
-            model.addAttribute("email", user.getEmail());
             return "redirect:/auth/verify?email=" + user.getEmail();
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "register";
         }
     }
+
 
     @GetMapping("/verify")
     public String verifyPage(@RequestParam String email,Model model){
@@ -91,14 +85,17 @@ public class AuthController {
     ) {
         try {
             UserEntity user = userService.login(email, password);
+
             session.setAttribute("LOGGED_IN_USER", user);
+
             return "redirect:/tasks/list";
         } catch (Exception e) {
-            e.printStackTrace();
             model.addAttribute("error", e.getMessage());
             return "login";
         }
     }
+
+
 
 
 

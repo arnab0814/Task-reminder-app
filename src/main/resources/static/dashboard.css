@@ -1,0 +1,121 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    padding: 6px 12px;
+    background: #e5e7eb;
+    color: #111827;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.back-btn:hover {
+    background: #d1d5db;
+}
+.pie {
+    --done: 0;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #10b981 calc(var(--done) * 1%),
+        #e5e7eb 0
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+
+.dashboard-container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px;
+}
+
+h1 {
+    margin-bottom: 25px;
+}
+
+/* KPI */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.kpi-card {
+    background: #fff;
+    padding: 18px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.kpi-card span {
+    font-size: 14px;
+    color: #777;
+}
+
+.kpi-card h2 {
+    margin-top: 8px;
+}
+
+/* Progress */
+.progress-section {
+    margin-top: 30px;
+}
+
+.progress-bar {
+    height: 16px;
+    background: #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #4caf50;
+    transition: width 0.6s ease;
+}
+
+/* Chart */
+.chart-section {
+    margin-top: 40px;
+}
+
+.bar {
+    margin-bottom: 18px;
+}
+
+.bar span {
+    font-size: 14px;
+}
+
+.bar-track {
+    height: 14px;
+    background: #e0e0e0;
+    border-radius: 7px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.bar-fill {
+    height: 100%;
+    transition: width 0.6s ease;
+}
+
+.bar-fill.pending { background: #ff9800; }
+.bar-fill.done { background: #4caf50; }
+.bar-fill.upcoming { background: #2196f3; }

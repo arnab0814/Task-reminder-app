@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Task Manager</title>
+    <link rel="stylesheet" th:href="@{/home.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo">TaskManager</div>
+    <div class="nav-actions">
+        <a th:href="@{/auth/login}" class="btn outline">Login</a>
+        <a th:href="@{/auth/register}" class="btn solid">Register</a>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Manage Your Tasks.<br>Stay Productive.</h1>
+        <p>
+            A smart task management system with dashboards,
+            reminders, analytics, and email notifications.
+        </p>
+
+        <div class="hero-actions">
+            <a th:href="@{/auth/register}" class="btn solid large">
+                Get Started Free
+            </a>
+            <a th:href="@{/auth/login}" class="btn outline large">
+                Login
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <h3>📊 Analytics Dashboard</h3>
+        <p>Track pending, done, overdue and completion percentage.</p>
+    </div>
+
+    <div class="feature-card">
+        <h3>⏰ Smart Reminders</h3>
+        <p>Email reminders for today and upcoming tasks.</p>
+    </div>
+
+    <div class="feature-card">
+        <h3>📅 Calendar View</h3>
+        <p>Visualize your tasks by date and priority.</p>
+    </div>
+
+    <div class="feature-card">
+        <h3>📤 Export & Reports</h3>
+        <p>Download or email task reports in CSV format.</p>
+    </div>
+</section>
+
+<footer class="footer">
+    <p>© 2026 TaskManager App. Developed By Arnab Das</p>
+</footer>
+
+</body>
+</html>

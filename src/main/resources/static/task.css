@@ -3,6 +3,22 @@
     box-sizing: border-box;
 }
 
+.nav-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+.export-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+
+
+
 body {
     margin: 0;
     font-family: "Inter", "Segoe UI", system-ui, sans-serif;
@@ -33,6 +49,110 @@ body {
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+
+/* Toolbar wrapper */
+.task-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    background: #fff;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+/* Filters */
+.task-filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Individual field */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.field label {
+    font-weight: 500;
+    color: #374151;
+}
+
+.field select,
+.field input {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    min-width: 140px;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Buttons */
+.btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+}
+
+
+.btn.primary {
+    background: #2563eb;
+    color: #fff;
+}
+
+.btn.light {
+    background: #2563eb;
+    color: #fff;
+}
+
+.btn.download {
+    background: #0ea5e9;
+    color: #fff;
+}
+
+.btn.mail {
+    background: #6366f1;
+    color: #fff;
+}
+
+.btn.add-task {
+    background: #16a34a;
+    color: #fff;
+    padding: 10px 18px;
+}
+
+@media (max-width: 900px) {
+    .task-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn.add-task {
+        align-self: flex-end;
+    }
+}
+.dashboard{
+     background: #16a34a;
+     color: #fff;
+     padding: 10px 18px;
 }
 
 .btn {

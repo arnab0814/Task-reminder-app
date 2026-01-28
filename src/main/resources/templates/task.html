@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Task List</title>
    <link rel="stylesheet" th:href="@{/task.css}">
+    <link rel="stylesheet" th:href="@{/dashboard-fragment.css}">
+    <link rel="stylesheet" th:href="@{/head.css}">
+
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
@@ -12,6 +15,11 @@
 </head>
 <body>
 <div th:replace="~{fragment/header :: header}"></div>
+<div th:replace="~{fragment/dashboard-fragment :: dashboard-fragment}"></div>
+
+
+
+
 
 <div id="cardView" class="card-container">
 
@@ -34,7 +42,9 @@
         <div class="card-actions">
 
             <button class="card-btn"
-                    onclick="openTaskFromCalendar([[${task.id}]])">
+                    onclick="openTaskFromCalendar([[${task.id}]])"
+                    th:href="@{/task_view}">
+
                 📅 Details
             </button>
 
@@ -77,41 +87,66 @@
 </div>
 
 
-<form th:action="@{/tasks/list}" method="get" style="margin-bottom:16px;">
-    <label for="status">Status:</label>
-    <select id="status" name="status">
-        <option value="" th:selected="${filterStatus == null}">-- Any --</option>
+<div class="task-toolbar">
 
-        <option th:each="s : ${T(com.taskmanager.app.entity.TaskEntity$Status).values()}"
-                th:value="${s.name()}"
-                th:text="${s.name()}"
-                th:selected="${filterStatus != null and filterStatus.name() == s.name()}">
-        </option>
-    </select>
+    <!-- LEFT SIDE : FILTER + EXPORT -->
+    <form th:action="@{/tasks/list}" method="get" class="task-filters">
 
-    <label for="priority" style="margin-left:12px;">Priority:</label>
-    <select id="priority" name="priority">
-        <option value="" th:selected="${filterPriority == null or filterPriority == ''}">-- Any --</option>
-        <option value="HIGH" th:selected="${filterPriority == 'HIGH'}">HIGH</option>
-        <option value="MEDIUM" th:selected="${filterPriority == 'MEDIUM'}">MEDIUM</option>
-        <option value="LOW" th:selected="${filterPriority == 'LOW'}">LOW</option>
-    </select>
+        <div class="field">
+            <label>Status</label>
+            <select name="status">
+                <option value="" th:selected="${filterStatus == null}">-- Any --</option>
+                <option th:each="s : ${T(com.taskmanager.app.entity.TaskEntity$Status).values()}"
+                        th:value="${s.name()}"
+                        th:text="${s.name()}"
+                        th:selected="${filterStatus != null and filterStatus.name() == s.name()}">
+                </option>
+            </select>
+        </div>
 
-    <label for="title" style="margin-left:12px;">Title:</label>
-    <input type="text" id="title" name="title" th:value="${filterTitle}" placeholder="Search title..."/>
+        <div class="field">
+            <label>Priority</label>
+            <select name="priority">
+                <option value="">-- Any --</option>
+                <option value="HIGH" th:selected="${filterPriority == 'HIGH'}">HIGH</option>
+                <option value="MEDIUM" th:selected="${filterPriority == 'MEDIUM'}">MEDIUM</option>
+                <option value="LOW" th:selected="${filterPriority == 'LOW'}">LOW</option>
+            </select>
+        </div>
 
-    <input type="hidden" name="sortField" th:value="${sortField}"/>
-    <input type="hidden" name="sortDir" th:value="${sortDir}"/>
-    <input type="hidden" name="size" th:value="${pageSize}"/>
+        <div class="field">
+            <label>Title</label>
+            <input type="text" name="title"
+                   th:value="${filterTitle}"
+                   placeholder="Search title...">
+        </div>
 
-    <button type="submit" style="margin-left:8px;">Filter</button>
-    <a href="/tasks/list" class="clrfilter" style="margin-left:8px;">
-        <button type="button">Clear Filters</button>
+        <!-- hidden params -->
+        <input type="hidden" name="sortField" th:value="${sortField}">
+        <input type="hidden" name="sortDir" th:value="${sortDir}">
+        <input type="hidden" name="size" th:value="${pageSize}">
+
+        <div class="actions">
+            <button type="submit" class="btn primary">Filter</button>
+            <a th:href="@{/tasks/list}" class="btn light">Clear</a>
+
+            <a th:href="@{/tasks/export/csv}" class="btn download">
+                ⬇ CSV
+            </a>
+
+            <a th:href="@{/tasks/export/email}" class="btn mail">
+                ✉ Email
+            </a>
+        </div>
+    </form>
+
+    <!-- RIGHT SIDE : ADD TASK -->
+    <a th:href="@{/tasks/new}" class="btn add-task">
+        ➕ Add New Task
     </a>
-    <a th:href="@{/tasks/new}" class="addNew" style="margin-top:14px;">
-            <button type="button">Add New Task</button>
-    </a>
-</form>
+
+</div>
+
 
 <div class="table-wrapper">
 <table>

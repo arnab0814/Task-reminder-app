@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="dashboard-fragment">
+
+    <!-- STATS -->
+    <section class="stats">
+        <a th:href="@{/tasks/list}" class="stat-card total">
+            <span>Total</span>
+            <b th:text="${totalTasks}">0</b>
+        </a>
+
+        <a th:href="@{/tasks/list(status='PENDING')}" class="stat-card pending">
+            <span>Pending</span>
+            <b th:text="${pendingCount}">0</b>
+        </a>
+
+        <a th:href="@{/tasks/list(upcoming=true)}" class="stat-card upcoming">
+            <span>Upcoming</span>
+            <b th:text="${upcomingCount}">0</b>
+        </a>
+
+        <a th:href="@{/tasks/list(status='DONE')}" class="stat-card done">
+            <span>Done</span>
+            <b th:text="${doneCount}">0</b>
+        </a>
+    </section>
+
+    <!-- PROGRESS BAR -->
+    <section class="progress-box">
+        <span>Completion</span>
+        <div class="progress-bar">
+            <div class="progress-fill"
+                 th:style="'width:' + ${completionPercent} + '%'">
+            </div>
+        </div>
+        <small th:text="${completionPercent + '%'}">0%</small>
+    </section>
+
+</div>
+
+</body>
+</html>
